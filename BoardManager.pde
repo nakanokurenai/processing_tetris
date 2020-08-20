@@ -94,6 +94,7 @@ class BoardManager {
   }
   void moveDown() {
     this.tryMove(1, 0);
+    this.autoDropTickCounter = 0;
   }
   void rotateLeft() {
     Tetrimino nextMino = this.currentMino.clone().rotateLeft();
