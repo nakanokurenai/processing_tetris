@@ -75,9 +75,14 @@ void setup() {
   size(500, 1000);
   board = new Board(0,0,300,1000);
 
+  board.add(forDebugSlowlyPickMino("S"), 0);
+  board.add(forDebugSlowlyPickMino("Z"), 0);
+  board.add(forDebugSlowlyPickMino("L"), 0);
+  board.add(forDebugSlowlyPickMino("O"), 0);
+  board.add(forDebugSlowlyPickMino("L"), 0);
+  board.add(forDebugSlowlyPickMino("J"), 0);
   board.add(forDebugSlowlyPickMino("I"), 0);
-  board.add(forDebugSlowlyPickMino("I").rotateRight().rotateRight(), 4);
-  board.add(forDebugSlowlyPickMino("O"), 8);
+  board.add(forDebugSlowlyPickMino("T"), 0);
 
   board.draw(0xffededed);
 }

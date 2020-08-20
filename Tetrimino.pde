@@ -73,7 +73,7 @@ class Tetrimino {
   
   // [debug]
   void drawText() {
-    println("[mino] " + this.name);
+    println("[mino] drawText: " + this.name);
     for (int i = 0; i < this.form.length; i++) {
       for (int j = 0; j < this.form[0].length; j++) {
         print((this.form[i][j] ? "x" : "_") + " ");
