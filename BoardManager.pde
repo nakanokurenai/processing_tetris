@@ -13,24 +13,10 @@ class BoardManager {
   private int currentMinoX;
   private int currentMinoY;
 
-  private Throttler moveLeftThrottler;
-  private Throttler moveRightThrottler;
-  private Throttler moveDownThrottler;
-  private Throttler hardDropThrottler;
-  private Throttler rotateLeftThrottler;
-  private Throttler rotateRightThrottler;
-
   private boolean isGameOver;
-  BoardManager(int autoDropTimingTick, int inputProcessTimingTick, Board board) {
+  BoardManager(int autoDropTimingTick, Board board) {
     this.autoDropTickCounter = 0;
     this.autoDropTimingTick = autoDropTimingTick;
-
-    this.moveLeftThrottler = new Throttler(inputProcessTimingTick);
-    this.moveRightThrottler = new Throttler(inputProcessTimingTick);
-    this.moveDownThrottler = new Throttler(inputProcessTimingTick);
-    this.hardDropThrottler = new Throttler(inputProcessTimingTick * 2);
-    this.rotateLeftThrottler = new Throttler(inputProcessTimingTick);
-    this.rotateRightThrottler = new Throttler(inputProcessTimingTick);
 
     this.nextManager = new TetriminoNextManager();
     this.board = board;
@@ -66,9 +52,6 @@ class BoardManager {
     this.currentMinoY += dy;
     this.currentMinoX += dx;
   }
-  private void doTSpin() {
-    // TODO
-  }
 
   void tick() {
     if (this.isGameOver) return;
@@ -79,32 +62,6 @@ class BoardManager {
       this.autoDropTickCounter = 0;
       this.onDropCurrentMino();
     }
-
-    // tick throttler
-    if (this.moveLeftThrottler.shouldProcess()) this.tryMove(0, -1);
-    if (this.moveRightThrottler.shouldProcess()) this.tryMove(0, 1);
-    if (this.moveDownThrottler.shouldProcess()) this.tryMove(1, 0);
-    if (this.hardDropThrottler.shouldProcess()) {
-      this.board.flushGhost();
-      this.confirmCurrentMino();
-    }
-    if (this.rotateLeftThrottler.shouldProcess()) {
-      Tetrimino nextMino = this.currentMino.clone().rotateLeft();
-      if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
-      this.currentMino = nextMino;
-    }
-    if (this.rotateRightThrottler.shouldProcess()) {
-      Tetrimino nextMino = this.currentMino.clone().rotateRight();
-      if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
-      this.currentMino = nextMino;
-    }
-
-    this.moveLeftThrottler.tick();
-    this.moveRightThrottler.tick();
-    this.moveDownThrottler.tick();
-    this.hardDropThrottler.tick();
-    this.rotateLeftThrottler.tick();
-    this.rotateRightThrottler.tick();
   }
 
   // event handlers
@@ -125,21 +82,26 @@ class BoardManager {
 
   // controls
   void hardDrop() {
-    this.hardDropThrottler.touch();
+    this.board.flushGhost();
+    this.confirmCurrentMino();
   }
   void moveLeft() {
-    this.moveLeftThrottler.touch();
+    this.tryMove(0, -1);
   }
   void moveRight() {
-    this.moveRightThrottler.touch();
+    this.tryMove(0, 1);
   }
   void moveDown() {
-    this.moveDownThrottler.touch();
+    this.tryMove(1, 0);
   }
   void rotateLeft() {
-    this.rotateLeftThrottler.touch();
+    Tetrimino nextMino = this.currentMino.clone().rotateLeft();
+    if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
+    this.currentMino = nextMino;
   }
   void rotateRight() {
-    this.rotateRightThrottler.touch();
+    Tetrimino nextMino = this.currentMino.clone().rotateRight();
+    if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
+    this.currentMino = nextMino;
   }
 }

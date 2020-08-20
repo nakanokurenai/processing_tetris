@@ -45,7 +45,7 @@ class Board {
   }
   boolean add(Tetrimino mino, int boardX, int minBoardY) {
     println("[add] mino=" + mino.name + ", x=" + boardX + ", minY=" + minBoardY);
-    if (0 > boardX || boardX + (mino.form[0].length-1) >= this.board[0].length) { //<>//
+    if (0 > boardX || boardX + (mino.form[0].length-1) >= this.board[0].length) { //<>// //<>//
       println("[add] x outside from board");
       return false;
     }
@@ -94,7 +94,7 @@ class Board {
     int minoXMax = mino.form[0].length;
     for (int minoY = 0; minoY < minoYMax; minoY++) {
       for (int minoX = 0; minoX < minoXMax; minoX++) {
-        if (!mino.form[minoY][minoX]) continue; //<>//
+        if (!mino.form[minoY][minoX]) continue; //<>// //<>//
         if (this.board[boardY+minoY][boardX+minoX] != null) return true;
       }
     }
