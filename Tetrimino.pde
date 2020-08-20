@@ -38,7 +38,6 @@ class Tetrimino {
     boolean[][] newForm = new boolean[jMax][iMax];
     for (int i = 0; i < iMax; i++) {
       for (int j = 0; j < jMax; j++) {
-        println("[rot] y=" + i + ", x=" + j + " -> y=" + j + ", x=" + ((iMax-1)-i));
         newForm[(jMax-1)-j][i] = this.form[i][j];
       }
     }
@@ -53,7 +52,6 @@ class Tetrimino {
     boolean[][] newForm = new boolean[jMax][iMax];
     for (int i = 0; i < iMax; i++) {
       for (int j = 0; j < jMax; j++) {
-        println("[rot] y=" + i + ", x=" + j + " -> y=" + j + ", x=" + ((iMax-1)-i));
         newForm[j][(iMax-1)-i] = this.form[i][j];
       }
     }
@@ -69,7 +67,6 @@ class Tetrimino {
   int getHeight() {
     return this.form.length;
   }
-
   
   // [debug]
   void drawText() {
