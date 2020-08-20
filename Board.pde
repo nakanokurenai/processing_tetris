@@ -25,29 +25,30 @@ class Board {
     
   }
   void add(Tetrimino mino, int boardX) {
-    int yColision = this.whenColideBottom(mino, boardX);
+    int boardY = this.placableY(mino, boardX);
     int minoHeight = mino.getHeight();
     int minoWidth = mino.getWidth();
-    println("[add] yColision=" + yColision + ", mino=" + mino.name + ", minoHeight=" + minoHeight + ", minoWidth=" + minoWidth);
+    println("[add] yColision=" + boardY + ", mino=" + mino.name + ", minoHeight=" + minoHeight + ", minoWidth=" + minoWidth);
     for (int minoY = 0; minoY < minoHeight; minoY++) {
       for (int minoX = 0; minoX < minoWidth; minoX++) {
         if (!mino.form[minoY][minoX]) continue;
-        int y = yColision - ((minoHeight-1) - minoY);
+        int y = boardY + minoY;
         int x = boardX + minoX;
         println("[add] fill y=" + y + ", x=" + x);
         this.board[y][x] = mino;
       }
     }
   }
+
   // return bottom boardY
-  int whenColideBottom(Tetrimino mino, int boardX) {
-    for (int bottomBoardY = this.board.length-1; bottomBoardY > mino.form.length-1; bottomBoardY--) {
-      println("[whenColideBottom] check colide on " + bottomBoardY);
-      if (!minoColide(mino, bottomBoardY - mino.form.length +1, boardX)) {
-        return bottomBoardY;
+  int placableY(Tetrimino mino, int boardX) {
+    for (int i = 0; i < this.board.length - mino.getHeight(); i++) {
+      if (minoColide(mino, i, boardX)) {
+        return i-1;
       }
     }
-    throw new Error("[whenColideBottom] No space left");
+    // (this.board.length-1) - (mino.getHeight()-1) == this.board.length - mino.getHeight()
+    return this.board.length - mino.getHeight();
   }
   // boardY: top, boardX: left
   private boolean minoColide(Tetrimino mino, int boardY, int boardX) {
@@ -68,7 +69,7 @@ class Board {
     for (int boardY = 0; boardY < this.board.length; boardY++) {
       for (int boardX = 0; boardX < this.board[0].length; boardX++) {
         if (this.board[boardY][boardX] == null) continue;
-        fill(this.board[boardY][boardX].blockColor & 0x33ffffff);
+        fill(this.board[boardY][boardX].blockColor & 0x90ffffff);
         rect(this.x + this.blockSize * boardX, this.y + this.blockSize * boardY, this.blockSize, this.blockSize);
       }
     }

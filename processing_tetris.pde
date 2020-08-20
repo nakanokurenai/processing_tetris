@@ -84,6 +84,7 @@ void setup() {
   board.add(forDebugSlowlyPickMino("J"), 0);
   board.add(forDebugSlowlyPickMino("I"), 0);
   board.add(forDebugSlowlyPickMino("T"), 0);
+  board.add(forDebugSlowlyPickMino("T").rotateLeft(), 2);
 
   board.draw(0xffededed);
 }
