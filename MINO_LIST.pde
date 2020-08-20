@@ -20,7 +20,7 @@ final Tetrimino[] MINO_LIST = {
   new Tetrimino(
     "O",
     // yellow
-    0xfffff98a,
+    0xffffea00,
     new boolean[][] {
       {true,true},
       {true,true},
