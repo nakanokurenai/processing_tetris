@@ -21,6 +21,7 @@ class Board {
     this.height = this.blockSize * (this.board.length - BOARD_HIDDEN_ROWS);
     this.width = this.blockSize * this.board[0].length;
   }
+  // callee should re-assign old-ghost if needed / failed
   boolean changeGhost(Tetrimino nextGhost, int boardY, int boardX) {
     this.flushGhost();
 

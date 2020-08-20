@@ -28,6 +28,19 @@ void draw() {
         break;
       }
     }
+  } else if (keyPressed == true) {
+    switch (key) {
+      case 'L':
+      case 'l': {
+        boardManager.rotateLeft();
+        break;
+      }
+      case 'R':
+      case 'r': {
+        boardManager.rotateRight();
+        break;
+      }
+    }
   }
   boardManager.tick();
   board.draw(0xffededed);

@@ -3,11 +3,8 @@ final int[] SCORE_PER_TOTAL_OF_DISAPPEARED_LINE = { 0, 40, 100, 300, 1200 };
 final String[] NAME_PER_TOTAL_OF_DISAPPEARED_LINE = { null, "SINGLE", "DOUBLE", "TRIPLE", "TETRIS" };
 
 class BoardManager {
-  private int tickCounter;
-
-  final int dropTickTiming;
-  final int inputProcessTiming;
-  int inputDX; int inputDY; 
+  private int autoDropTickCounter;
+  private int autoDropTimingTick;
 
   private Board board;
   private TetriminoNextManager nextManager;
@@ -16,13 +13,25 @@ class BoardManager {
   private int currentMinoX;
   private int currentMinoY;
 
+  private Throttler moveLeftThrottler;
+  private Throttler moveRightThrottler;
+  private Throttler moveDownThrottler;
+  private Throttler hardDropThrottler;
+  private Throttler rotateLeftThrottler;
+  private Throttler rotateRightThrottler;
+
   private boolean isGameOver;
-  BoardManager(int dropTickTiming, int inputProcessTiming, Board board) {
-    this.tickCounter = 0;
-    this.dropTickTiming = dropTickTiming;
-    this.inputProcessTiming = inputProcessTiming;
-    this.inputDX = 0;
-    this.inputDY = 0;
+  BoardManager(int autoDropTimingTick, int inputProcessTimingTick, Board board) {
+    this.autoDropTickCounter = 0;
+    this.autoDropTimingTick = autoDropTimingTick;
+
+    this.moveLeftThrottler = new Throttler(inputProcessTimingTick);
+    this.moveRightThrottler = new Throttler(inputProcessTimingTick);
+    this.moveDownThrottler = new Throttler(inputProcessTimingTick);
+    this.hardDropThrottler = new Throttler(inputProcessTimingTick * 2);
+    this.rotateLeftThrottler = new Throttler(inputProcessTimingTick);
+    this.rotateRightThrottler = new Throttler(inputProcessTimingTick);
+
     this.nextManager = new TetriminoNextManager();
     this.board = board;
     this.popNextMino();
@@ -40,28 +49,62 @@ class BoardManager {
   private void confirmCurrentMino() {
     this.board.add(this.currentMino, this.currentMinoX, this.currentMinoY);
     this.popNextMino();
-    tickCounter = 0;
+    autoDropTickCounter = 0;
   }
   private void restoreGhost() {
     this.board.changeGhost(this.currentMino, this.currentMinoY, this.currentMinoX);
+  }
+  private boolean tryChangeGhost(Tetrimino nextMino, int boardY, int boardX) {
+    if (!this.board.changeGhost(nextMino, boardY, boardX)) {
+      this.restoreGhost();
+      return false;
+    }
+    return true;
+  }
+  private void tryMove(int dy, int dx) {
+    if (!tryChangeGhost(this.currentMino, this.currentMinoY + dy, this.currentMinoX + dx)) return;
+    this.currentMinoY += dy;
+    this.currentMinoX += dx;
+  }
+  private void doTSpin() {
+    // TODO
   }
 
   void tick() {
     if (this.isGameOver) return;
 
-    tickCounter++;
-    int matched = 0;
+    autoDropTickCounter++;
 
-    if (tickCounter % inputProcessTiming == 0) {
-      matched++;
-      this.onProceeeInput();
-    }
-    if (tickCounter % dropTickTiming == 0) {
-      matched++;
+    if (autoDropTickCounter % autoDropTimingTick == 0) {
+      this.autoDropTickCounter = 0;
       this.onDropCurrentMino();
     }
 
-    if (matched == 2) this.tickCounter = 0;
+    // tick throttler
+    if (this.moveLeftThrottler.shouldProcess()) this.tryMove(0, -1);
+    if (this.moveRightThrottler.shouldProcess()) this.tryMove(0, 1);
+    if (this.moveDownThrottler.shouldProcess()) this.tryMove(1, 0);
+    if (this.hardDropThrottler.shouldProcess()) {
+      this.board.flushGhost();
+      this.confirmCurrentMino();
+    }
+    if (this.rotateLeftThrottler.shouldProcess()) {
+      Tetrimino nextMino = this.currentMino.clone().rotateLeft();
+      if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
+      this.currentMino = nextMino;
+    }
+    if (this.rotateRightThrottler.shouldProcess()) {
+      Tetrimino nextMino = this.currentMino.clone().rotateRight();
+      if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
+      this.currentMino = nextMino;
+    }
+
+    this.moveLeftThrottler.tick();
+    this.moveRightThrottler.tick();
+    this.moveDownThrottler.tick();
+    this.hardDropThrottler.tick();
+    this.rotateLeftThrottler.tick();
+    this.rotateRightThrottler.tick();
   }
 
   // event handlers
@@ -75,29 +118,6 @@ class BoardManager {
 
     this.board.drawText();
   }
-  private void onProceeeInput() {
-    if (this.inputDY == 0 && this.inputDX == 0) {
-      return;
-    }
-
-    if (this.inputDY == -1) {
-      // hard drop
-      this.board.flushGhost();
-      this.confirmCurrentMino();
-      this.inputDY = 0;
-      this.inputDX = 0;
-      return;
-    }
-
-    if (!this.board.changeGhost(this.currentMino, this.currentMinoY + this.inputDY, this.currentMinoX + this.inputDX)) {
-      this.restoreGhost();
-      return;
-    }
-    this.currentMinoY += this.inputDY;
-    this.currentMinoX += this.inputDX;
-    this.inputDY = 0;
-    this.inputDX = 0;
-  }
   private void onBoardFull() {
     // game over
     this.isGameOver = true;
@@ -105,30 +125,21 @@ class BoardManager {
 
   // controls
   void hardDrop() {
-    this.inputDY = -1;
-    this.inputDX = 0;
+    this.hardDropThrottler.touch();
   }
   void moveLeft() {
-    this.inputDY = 0;
-    this.inputDX = -1;
+    this.moveLeftThrottler.touch();
   }
   void moveRight() {
-    this.inputDY = 0;
-    this.inputDX = 1;
+    this.moveRightThrottler.touch();
   }
   void moveDown() {
-    this.inputDY = 1;
-    this.inputDX = 0;
+    this.moveDownThrottler.touch();
   }
   void rotateLeft() {
-    if (this.isGameOver) return;
-    
+    this.rotateLeftThrottler.touch();
   }
   void rotateRight() {
-    if (this.isGameOver) return;
-    
-  }
-  private void doTSpin() {
-    
+    this.rotateRightThrottler.touch();
   }
 }
