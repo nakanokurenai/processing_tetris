@@ -34,6 +34,7 @@ class BoardManager {
   }
   private void confirmCurrentMino() {
     this.board.add(this.currentMino, this.currentMinoX, this.currentMinoY);
+    this.board.removeCompletedLines();
     this.popNextMino();
     autoDropTickCounter = 0;
   }

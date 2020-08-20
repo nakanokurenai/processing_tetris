@@ -22,6 +22,7 @@ class Board {
     this.height = this.blockSize * (this.board.length - BOARD_HIDDEN_ROWS);
     this.width = this.blockSize * this.board[0].length;
   }
+
   // callee should re-assign old-ghost if needed / failed
   boolean changeCurrent(Tetrimino next, int boardY, int boardX) {
     this.flushCurrent();
@@ -45,8 +46,40 @@ class Board {
     this.currentGhost = null;
   }
 
-  void add(Tetrimino mino, int boardX) {
-    this.add(mino, boardX, 0);
+  // returns removed count of line
+  int removeCompletedLines() {
+    println("[removeCompletedLines]");
+    int cnt = 0;
+    int[] yMove = new int[this.board.length];
+    outside: for (int i = this.board.length-1; i >= 0; i--) {
+      println("[removeConpletedLine] Check y=" + i);
+      for (int j = 0; j < this.board[0].length; j++) {
+        if (board[i][j] == null) continue outside;
+      }
+      println("[removeConpletedLine] y=" + i + " will removed");
+      cnt++;
+      for (int k = 0; k < i; k++) {
+        yMove[k] = yMove[k]+1;
+      }
+    }
+
+    // apply
+    for (int i = this.board.length-1; i >= cnt; i--) {
+      if (yMove[i] == 0) continue;
+      println("[removeCompletedLines] Move y=" + i + " to y=" + (i + yMove[i]));
+      for (int j = 0; j < this.board[0].length; j++) {
+        this.board[i + yMove[i]][j] = this.board[i][j];
+      }
+    }
+    for (int i = 0; i < cnt; i++) {
+      this.board[i] = new Tetrimino[this.board[0].length];
+    }
+
+    return cnt;
+  }
+
+  boolean add(Tetrimino mino, int boardX) {
+    return this.add(mino, boardX, 0);
   }
   boolean add(Tetrimino mino, int boardX, int minBoardY) {
     println("[add] mino=" + mino.name + ", x=" + boardX + ", minY=" + minBoardY);
@@ -56,33 +89,15 @@ class Board {
     }
 
     int boardY = this.placableY(mino, boardX, minBoardY);
-    // FIXME: move into placableY
     if (minBoardY > boardY) {
       println("[add] no space left to add mino=" + mino.name + " under y=" + minBoardY);
       return false;
     }
-    println("[add] yColision=" + boardY);
 
     this.forceAdd(mino, boardY, boardX);
-
     return true;
   }
 
-  private void forceAdd(Tetrimino mino, int boardY, int boardX) {
-    int minoHeight = mino.getHeight();
-    int minoWidth = mino.getWidth();
-    println("[forceAdd] mino=" + mino.name + ", minoHeight=" + minoHeight + ", minoWidth=" + minoWidth + ", boardY=" + boardY + ", boardX=" + boardX);
-    for (int minoY = 0; minoY < minoHeight; minoY++) {
-      for (int minoX = 0; minoX < minoWidth; minoX++) {
-        if (!mino.form[minoY][minoX]) continue;
-        int y = boardY + minoY;
-        int x = boardX + minoX;
-        this.board[y][x] = mino;
-      }
-    }
-  }
-
-  // return boardY
   int placableY(Tetrimino mino, int boardX, int after) {
     println("[placableY] mino=" + mino.name + ", boardX=" + boardX + ", after=" + after);
     for (int boardY = after; boardY < (this.board.length) - (mino.getHeight()-1); boardY++) {
@@ -104,6 +119,20 @@ class Board {
       }
     }
     return false;
+  }
+
+  private void forceAdd(Tetrimino mino, int boardY, int boardX) {
+    int minoHeight = mino.getHeight();
+    int minoWidth = mino.getWidth();
+    println("[forceAdd] mino=" + mino.name + ", minoHeight=" + minoHeight + ", minoWidth=" + minoWidth + ", boardY=" + boardY + ", boardX=" + boardX);
+    for (int minoY = 0; minoY < minoHeight; minoY++) {
+      for (int minoX = 0; minoX < minoWidth; minoX++) {
+        if (!mino.form[minoY][minoX]) continue;
+        int y = boardY + minoY;
+        int x = boardX + minoX;
+        this.board[y][x] = mino;
+      }
+    }
   }
 
   // must clear canvas before call
