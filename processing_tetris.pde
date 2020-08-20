@@ -12,7 +12,8 @@ final Tetrimino[] MINO_LIST = {
   ),
   new Tetrimino(
     "Z",
-    0,
+    // red
+    0xfff56d47,
     new boolean[][] {
       {true,true,false},
       {false,true,true},
