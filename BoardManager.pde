@@ -25,7 +25,7 @@ class BoardManager {
  
   private void popNextMino() {
     Tetrimino nextMino = this.nextManager.pop();
-    if (!this.board.changeGhost(nextMino, 0, 0)) {
+    if (!this.board.changeCurrent(nextMino, 0, 0)) {
       this.onBoardFull();
     };
     this.currentMino = nextMino;
@@ -37,18 +37,18 @@ class BoardManager {
     this.popNextMino();
     autoDropTickCounter = 0;
   }
-  private void restoreGhost() {
-    this.board.changeGhost(this.currentMino, this.currentMinoY, this.currentMinoX);
+  private void restoreCurrent() {
+    this.board.changeCurrent(this.currentMino, this.currentMinoY, this.currentMinoX);
   }
-  private boolean tryChangeGhost(Tetrimino nextMino, int boardY, int boardX) {
-    if (!this.board.changeGhost(nextMino, boardY, boardX)) {
-      this.restoreGhost();
+  private boolean tryChangeCurrent(Tetrimino nextMino, int boardY, int boardX) {
+    if (!this.board.changeCurrent(nextMino, boardY, boardX)) {
+      this.restoreCurrent();
       return false;
     }
     return true;
   }
   private void tryMove(int dy, int dx) {
-    if (!tryChangeGhost(this.currentMino, this.currentMinoY + dy, this.currentMinoX + dx)) return;
+    if (!tryChangeCurrent(this.currentMino, this.currentMinoY + dy, this.currentMinoX + dx)) return;
     this.currentMinoY += dy;
     this.currentMinoX += dx;
   }
@@ -67,7 +67,8 @@ class BoardManager {
   // event handlers
   private void onDropCurrentMino() {
     // drop current mino
-    if (!this.board.changeGhost(this.currentMino, this.currentMinoY+1, this.currentMinoX)) {
+    if (!this.board.changeCurrent(this.currentMino, this.currentMinoY+1, this.currentMinoX)) {
+      // FIXME: this block expects that board flushed currentMino already
       // if can't drop, confirm it
       this.confirmCurrentMino();
     };
@@ -82,7 +83,7 @@ class BoardManager {
 
   // controls
   void hardDrop() {
-    this.board.flushGhost();
+    this.board.flushCurrent();
     this.confirmCurrentMino();
   }
   void moveLeft() {
@@ -96,12 +97,12 @@ class BoardManager {
   }
   void rotateLeft() {
     Tetrimino nextMino = this.currentMino.clone().rotateLeft();
-    if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
+    if (!tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX)) return;
     this.currentMino = nextMino;
   }
   void rotateRight() {
     Tetrimino nextMino = this.currentMino.clone().rotateRight();
-    if (!tryChangeGhost(nextMino, this.currentMinoY, this.currentMinoX)) return;
+    if (!tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX)) return;
     this.currentMino = nextMino;
   }
 }

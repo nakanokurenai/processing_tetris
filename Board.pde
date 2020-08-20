@@ -4,6 +4,7 @@ class Board {
   // top=0,left=0
   // [boardY][boardX]
   private Tetrimino[][] board;
+  private Tetrimino current;
   private Tetrimino currentGhost;
   private int x;
   private int y;
@@ -22,21 +23,25 @@ class Board {
     this.width = this.blockSize * this.board[0].length;
   }
   // callee should re-assign old-ghost if needed / failed
-  boolean changeGhost(Tetrimino nextGhost, int boardY, int boardX) {
-    this.flushGhost();
+  boolean changeCurrent(Tetrimino next, int boardY, int boardX) {
+    this.flushCurrent();
 
-    if (!this.add(nextGhost, boardX, boardY)) return false;
-    this.currentGhost = nextGhost;
-    this.forceAdd(nextGhost, boardY, boardX);
+    Tetrimino ghost = next.clone();
+    ghost.blockColor = ghost.blockColor & 0x70ffffff;
+    if (!this.add(ghost, boardX, boardY)) return false;
+    this.currentGhost = ghost;
+    this.forceAdd(next, boardY, boardX);
+    this.current = next;
     return true;
   }
-  void flushGhost() {
+  void flushCurrent() {
     for (int i = 0; i < board.length; i++) {
       for (int j = 0; j < board[0].length; j++) {
-        if (board[i][j] != this.currentGhost) continue;
+        if (board[i][j] != this.currentGhost && board[i][j] != this.current) continue;
         board[i][j] = null;
       }
     }
+    this.current = null;
     this.currentGhost = null;
   }
 
@@ -108,7 +113,7 @@ class Board {
     for (int boardY = BOARD_HIDDEN_ROWS; boardY < this.board.length; boardY++) {
       for (int boardX = 0; boardX < this.board[0].length; boardX++) {
         if (this.board[boardY][boardX] == null) continue;
-        fill(this.board[boardY][boardX].blockColor & 0x90ffffff);
+        fill(this.board[boardY][boardX].blockColor);
         rect(this.x + this.blockSize * boardX, this.y + this.blockSize * (boardY - BOARD_HIDDEN_ROWS), this.blockSize, this.blockSize);
       }
     }
