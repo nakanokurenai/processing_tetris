@@ -18,7 +18,7 @@ class BoardManager {
  
   void popNextMino() {
     Tetrimino nextMino = this.nextManager.pop();
-    if (!this.board.changeGhost(this.currentMino, 0, 0)) {
+    if (!this.board.changeGhost(nextMino, 0, 0)) {
       this.onBoardFull();
     };
     this.currentMino = nextMino;
@@ -32,7 +32,6 @@ class BoardManager {
     if (tickCounter > waitCount) {
       tickCounter = 0;
       this.onTickCounterReset();
-      this.board.drawText();
     }
   }
 
@@ -40,11 +39,14 @@ class BoardManager {
     // drop current mino
     if (!this.board.changeGhost(this.currentMino, this.currentMinoY+1, this.currentMinoX)) {
       // if can't drop, confirm it
-      this.onCurrentMinoConfirmed();
+      this.confirmCurrentMino();
     };
     this.currentMinoY++;
+
+    this.board.drawText();
   }
-  private void onCurrentMinoConfirmed() {
+
+  private void confirmCurrentMino() {
     this.board.add(this.currentMino, this.currentMinoX);
     this.popNextMino();
   }

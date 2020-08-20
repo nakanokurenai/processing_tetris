@@ -70,7 +70,7 @@ class Board {
         if (!mino.form[minoY][minoX]) continue;
         int y = boardY + minoY;
         int x = boardX + minoX;
-        println("[add] fill y=" + y + ", x=" + x);
+        println("[forceAdd] fill y=" + y + ", x=" + x);
         this.board[y][x] = mino;
       }
     }
