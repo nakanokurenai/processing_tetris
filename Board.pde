@@ -43,7 +43,8 @@ class Board {
     this.add(mino, boardX, 0);
   }
   boolean add(Tetrimino mino, int boardX, int minBoardY) {
-    if (boardX + (mino.form[0].length-1) >= this.board[0].length) {
+    println("[add] mino=" + mino.name + ", x=" + boardX + ", minY=" + minBoardY);
+    if (0 > boardX || boardX + (mino.form[0].length-1) >= this.board[0].length) { //<>//
       println("[add] x outside from board");
       return false;
     }
@@ -64,13 +65,12 @@ class Board {
   private void forceAdd(Tetrimino mino, int boardY, int boardX) {
     int minoHeight = mino.getHeight();
     int minoWidth = mino.getWidth();
-    println("[forceAdd] mino=" + mino.name + ", minoHeight=" + minoHeight + ", minoWidth=" + minoWidth);
+    println("[forceAdd] mino=" + mino.name + ", minoHeight=" + minoHeight + ", minoWidth=" + minoWidth + ", boardY=" + boardY + ", boardX=" + boardX);
     for (int minoY = 0; minoY < minoHeight; minoY++) {
       for (int minoX = 0; minoX < minoWidth; minoX++) {
         if (!mino.form[minoY][minoX]) continue;
         int y = boardY + minoY;
         int x = boardX + minoX;
-        println("[forceAdd] fill y=" + y + ", x=" + x);
         this.board[y][x] = mino;
       }
     }
@@ -78,6 +78,7 @@ class Board {
 
   // return boardY
   int placableY(Tetrimino mino, int boardX, int after) {
+    println("[placableY] mino=" + mino.name + ", boardX=" + boardX + ", after=" + after);
     for (int boardY = after; boardY < (this.board.length) - (mino.getHeight()-1); boardY++) {
       if (minoColide(mino, boardY, boardX)) {
         return boardY-1;
@@ -88,9 +89,11 @@ class Board {
   }
   // boardY: top, boardX: left
   private boolean minoColide(Tetrimino mino, int boardY, int boardX) {
-    for (int minoY = 0; minoY < mino.form.length; minoY++) {
-      for (int minoX = 0; minoX < mino.form[0].length; minoX++) {
-        if (!mino.form[minoY][minoX]) continue;
+    int minoYMax = mino.form.length;
+    int minoXMax = mino.form[0].length;
+    for (int minoY = 0; minoY < minoYMax; minoY++) {
+      for (int minoX = 0; minoX < minoXMax; minoX++) {
+        if (!mino.form[minoY][minoX]) continue; //<>//
         if (this.board[boardY+minoY][boardX+minoX] != null) return true;
       }
     }
