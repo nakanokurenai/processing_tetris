@@ -8,7 +8,7 @@ class Tetrimino {
   // DON'T EDIT FROM OUTSIDE
   boolean[][] form;
   String name;
-  final color blockColor;
+  color blockColor;
   Tetrimino(String name, color blockColor, boolean[][] form) {
     if (!this.validateForm(form)) {
       throw new Error("form is invalid");

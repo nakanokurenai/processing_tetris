@@ -1,69 +1,6 @@
-Board board;
-
-final Tetrimino[] MINO_LIST = {
-  new Tetrimino(
-    "S",
-    // green
-    0xff70d48b,
-    new boolean[][] {
-     {false,true,true},
-     {true,true,false},
-    }
-  ),
-  new Tetrimino(
-    "Z",
-    // red
-    0xfff56d47,
-    new boolean[][] {
-      {true,true,false},
-      {false,true,true},
-    }
-  ),
-  new Tetrimino(
-    "O",
-    // yellow
-    0xfffff98a,
-    new boolean[][] {
-      {true,true},
-      {true,true},
-    }
-  ),
-  new Tetrimino(
-    "L",
-    // orange
-    0xffd49966,
-    new boolean[][] {
-      {false,false,true},
-      {true,true,true},
-    }
-  ),
-  new Tetrimino(
-    "J",
-    // blue
-    0xff667cd4,
-    new boolean[][] {
-      {true,false,false},
-      {true,true,true},
-    }
-  ),
-  new Tetrimino(
-    "I",
-    // skyblue
-    0xff73cbd9,
-    new boolean[][] {
-      {true,true,true,true}
-    }
-  ),
-  new Tetrimino(
-    "T",
-    // purple
-    0xffa134eb,
-    new boolean[][] {
-      {false,true,false},
-      {true,true,true},
-    }
-  ),
-};
+// [no line, single, double, tetris]
+final int[] SCORE_PER_TOTAL_OF_DISAPPEARED_LINE = { 0, 40, 100, 300, 1200 };
+final String[] NAME_PER_TOTAL_OF_DISAPPEARED_LINE = { null, "SINGLE", "DOUBLE", "TRIPLE", "TETRIS" };
 
 Tetrimino forDebugSlowlyPickMino(String key) {
   for (int i = 0; i < MINO_LIST.length; i++) {
@@ -71,20 +8,34 @@ Tetrimino forDebugSlowlyPickMino(String key) {
   }
   throw new Error("NO MINO");
 }
+Tetrimino dPick(String k) {
+  return forDebugSlowlyPickMino(k);
+}
+
+Board board;
+BoardManager boardManager;
 
 void setup() {
   size(500, 1000);
   board = new Board(0,0,300,1000);
 
-  board.add(forDebugSlowlyPickMino("S"), 0);
-  board.add(forDebugSlowlyPickMino("Z"), 0);
-  board.add(forDebugSlowlyPickMino("L"), 0);
-  board.add(forDebugSlowlyPickMino("O"), 0);
-  board.add(forDebugSlowlyPickMino("L"), 0);
-  board.add(forDebugSlowlyPickMino("J"), 0);
-  board.add(forDebugSlowlyPickMino("I"), 0);
-  board.add(forDebugSlowlyPickMino("T"), 0);
-  board.add(forDebugSlowlyPickMino("T").rotateLeft(), 2);
+  board.add(dPick("T"), 2);
+  board.add(dPick("S"), 0);
+  board.add(dPick("I").rotateLeft(), 0);
+  board.add(dPick("T"), 6);
+  board.add(dPick("T").rotateLeft(), 8);
+  board.add(dPick("I"), 1);
 
+  board.add(dPick("T").rotateRight().rotateRight(), 4);
+  Tetrimino spinT = dPick("T").rotateRight().rotateRight();
+  spinT.blockColor = 0xff000000;
+  board.add(spinT, 4, 18+2);
+
+  boardManager = new BoardManager(1, board);
+}
+
+void draw() {
+  clear();
+  boardManager.tick();
   board.draw(0xffededed);
 }
