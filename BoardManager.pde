@@ -27,6 +27,7 @@ class BoardManager {
     Tetrimino nextMino = this.nextManager.pop();
     if (!this.board.changeCurrent(nextMino, 0, 0)) {
       this.onBoardFull();
+      return;
     };
     this.currentMino = nextMino;
     this.currentMinoX = 0;
