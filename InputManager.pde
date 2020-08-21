@@ -41,13 +41,13 @@ class InputManager {
       }
     } else if (keyPressed == true) {
       switch (key) {
-        case 'L':
-        case 'l': {
+        case 'Z':
+        case 'z': {
           rotateLeftThrottler.touch();
           break;
         }
-        case 'R':
-        case 'r': {
+        case 'X':
+        case 'x': {
           rotateRightThrottler.touch();
           break;
         }
