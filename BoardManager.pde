@@ -61,12 +61,12 @@ class BoardManager {
 
     if (autoDropTickCounter % autoDropTimingTick == 0) {
       this.autoDropTickCounter = 0;
-      this.onDropCurrentMino();
+      this.autoDropCurrentMino();
     }
   }
 
   // event handlers
-  private void onDropCurrentMino() {
+  private void autoDropCurrentMino() {
     // drop current mino
     if (!this.board.changeCurrent(this.currentMino, this.currentMinoY+1, this.currentMinoX)) {
       // FIXME: this block expects that board flushed currentMino already
