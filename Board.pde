@@ -8,7 +8,6 @@ class Board {
   private Tetrimino currentGhost;
   final int width;
   final int height;
-  private boolean locked;
   Board() {
     // generally tetris implemented as visible 20x10 board,
     // but there are also invisibly +2 line.
@@ -21,8 +20,6 @@ class Board {
 
   // callee should re-assign old-ghost if needed / failed
   boolean changeCurrent(Tetrimino next, int boardY, int boardX) {
-    if (locked) return false;
-    
     this.flushCurrent();
 
     Tetrimino ghost = next.clone();
@@ -34,8 +31,6 @@ class Board {
     return true;
   }
   void flushCurrent() {
-    if (locked) return;
-
     for (int i = 0; i < board.length; i++) {
       for (int j = 0; j < board[0].length; j++) {
         if (board[i][j] != this.currentGhost && board[i][j] != this.current) continue;
@@ -48,11 +43,7 @@ class Board {
 
   // returns removed count of line
   int removeCompletedLines() {
-    if (locked) return 0;
-
     println("[removeCompletedLines]");
-    // may occur dead-locking
-    this.locked = true;
     int cnt = 0;
     int[] yMove = new int[this.board.length];
     outside: for (int i = this.board.length-1; i >= 0; i--) {
@@ -78,7 +69,6 @@ class Board {
       this.board[i] = new Tetrimino[this.board[0].length];
     }
 
-    this.locked = false;
     return cnt;
   }
 
@@ -86,8 +76,6 @@ class Board {
     return this.add(mino, boardX, 0);
   }
   boolean add(Tetrimino mino, int boardX, int minBoardY) {
-    if (locked) return false;
-
     println("[add] mino=" + mino.name + ", x=" + boardX + ", minY=" + minBoardY);
     if (0 > boardX || boardX + (mino.form[0].length-1) >= this.board[0].length) {
       println("[add] x outside from board");
