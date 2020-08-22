@@ -1,6 +1,6 @@
 ぷろせっしんぐ てとりす
 ===
-<img src=./docs/play.gif width=300 />
+<img src=./docs/play-b85cac5.gif width=500 />
 
 LICENSE
 ---

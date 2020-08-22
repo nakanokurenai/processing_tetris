@@ -1,3 +1,4 @@
 *.autosave
 *.mov
 *.sh
+.DS_Store
