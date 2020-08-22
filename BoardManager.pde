@@ -13,6 +13,9 @@ class BoardManager {
   private int currentMinoX;
   private int currentMinoY;
 
+  private Tetrimino holdMino;
+  private boolean holdUsed;
+
   private int score;
 
   private boolean isGameOver;
@@ -42,6 +45,7 @@ class BoardManager {
     println("[confirmCurrentMino] score = " + score);
     this.popNextMino();
     this.autoDropTickCounter = 0;
+    this.holdUsed = false;
   }
   private void restoreCurrent() {
     this.board.changeCurrent(this.currentMino, this.currentMinoY, this.currentMinoX);
@@ -111,5 +115,22 @@ class BoardManager {
     Tetrimino nextMino = this.currentMino.clone().rotateRight();
     if (!tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX)) return;
     this.currentMino = nextMino;
+  }
+  boolean swapHoldMino() {
+    println("[swapHoldMino] try to swap");
+    if (this.holdUsed) {
+      println("[swapHoldMino] already swapped...");
+      return false;
+    }
+    if (holdMino == null) {
+      println("[swapHoldMino] pop next mino");
+      holdMino = this.nextManager.pop();
+    }
+    Tetrimino nextMino = holdMino;
+    this.holdUsed = true;
+    tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX);
+    this.holdMino = this.currentMino;
+    this.currentMino = nextMino;
+    return true;
   }
 }

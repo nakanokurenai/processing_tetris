@@ -7,6 +7,7 @@ class InputManager {
   private Throttler hardDropThrottler;
   private Throttler rotateLeftThrottler;
   private Throttler rotateRightThrottler;
+  private Throttler swapHoldThrottler;
 
   InputManager(BoardManager bm, int inputProcessTimingTick) {
     this.boardManager = bm;
@@ -17,6 +18,7 @@ class InputManager {
     this.hardDropThrottler = new Throttler(inputProcessTimingTick * 2);
     this.rotateLeftThrottler = new Throttler(inputProcessTimingTick);
     this.rotateRightThrottler = new Throttler(inputProcessTimingTick);
+    this.swapHoldThrottler = new Throttler(inputProcessTimingTick);
   }
 
   void touch() {
@@ -36,6 +38,10 @@ class InputManager {
         }
         case RIGHT: {
           moveRightThrottler.touch();
+          break;
+        }
+        case SHIFT: {
+          swapHoldThrottler.touch();
           break;
         }
       }
@@ -62,6 +68,7 @@ class InputManager {
     if (this.hardDropThrottler.shouldProcess()) this.boardManager.hardDrop();
     if (this.rotateLeftThrottler.shouldProcess()) this.boardManager.rotateLeft();
     if (this.rotateRightThrottler.shouldProcess()) this.boardManager.rotateRight();
+    if (this.swapHoldThrottler.shouldProcess()) this.boardManager.swapHoldMino();
 
     this.moveLeftThrottler.tick();
     this.moveRightThrottler.tick();
@@ -69,5 +76,6 @@ class InputManager {
     this.hardDropThrottler.tick();
     this.rotateLeftThrottler.tick();
     this.rotateRightThrottler.tick();
+    this.swapHoldThrottler.tick();
   }
 }
