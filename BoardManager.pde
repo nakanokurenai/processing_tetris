@@ -102,30 +102,37 @@ class BoardManager {
 
   // controls
   void hardDrop() {
+    if (this.isGameOver) return;
     this.board.flushCurrent();
     this.confirmCurrentMino();
   }
   void moveLeft() {
+    if (this.isGameOver) return;
     this.tryMove(0, -1);
   }
   void moveRight() {
+    if (this.isGameOver) return;
     this.tryMove(0, 1);
   }
   void moveDown() {
+    if (this.isGameOver) return;
     this.tryMove(1, 0);
     this.autoDropTickCounter = 0;
   }
   void rotateLeft() {
+    if (this.isGameOver) return;
     Tetrimino nextMino = this.currentMino.clone().rotateLeft();
     if (!tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX)) return;
     this.currentMino = nextMino;
   }
   void rotateRight() {
+    if (this.isGameOver) return;
     Tetrimino nextMino = this.currentMino.clone().rotateRight();
     if (!tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX)) return;
     this.currentMino = nextMino;
   }
   boolean swapHoldMino() {
+    if (this.isGameOver) return false;
     println("[swapHoldMino] try to swap");
     if (this.holdUsed) {
       println("[swapHoldMino] already swapped...");
