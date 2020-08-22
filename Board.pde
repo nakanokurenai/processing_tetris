@@ -14,9 +14,9 @@ class Board {
     // but there are also invisibly +2 line.
     board = new Tetrimino[22][10];
 
-    this.height = blockSize * (this.board.length - BOARD_HIDDEN_ROWS);
-    this.width = blockSize * this.board[0].length;
-    println("[Board] Initialized with blockSize=" + blockSize + ", height=" + height + ", width=" + width);
+    this.height = BLOCK_SIZE * (this.board.length - BOARD_HIDDEN_ROWS);
+    this.width = BLOCK_SIZE * this.board[0].length;
+    println("[Board] Initialized with blockSize=" + BLOCK_SIZE + ", height=" + height + ", width=" + width);
   }
 
   // callee should re-assign old-ghost if needed / failed

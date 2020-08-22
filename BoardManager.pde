@@ -18,12 +18,8 @@ class BoardManager {
 
   private int score;
 
-  private int fontSize;
-
   private boolean isGameOver;
-  BoardManager(int autoDropTimingTick, Board board, int fontSize) {
-    this.fontSize = fontSize;
-
+  BoardManager(int autoDropTimingTick, Board board) {
     this.autoDropTickCounter = 0;
     this.autoDropTimingTick = autoDropTimingTick;
 
@@ -31,7 +27,27 @@ class BoardManager {
     this.board = board;
     this.popNextMino();
   }
- 
+
+  /* expose state */
+  int getScore() { return this.score; }
+  boolean isGameOver() { return this.isGameOver; }
+  // nullable
+  Tetrimino getHoldMino() { return this.holdMino; }
+  // guarantee 3-length array
+  Tetrimino[] getNextMinos() { return this.nextManager.getNextList(); }
+
+  /* tick */
+  void tick() {
+    if (this.isGameOver) return;
+
+    autoDropTickCounter++;
+
+    if (autoDropTickCounter % autoDropTimingTick == 0) {
+      this.autoDropTickCounter = 0;
+      this.autoDropCurrentMino();
+    }
+  }
+
   private void popNextMino() {
     Tetrimino nextMino = this.nextManager.pop();
     if (!this.board.changeCurrent(nextMino, 0, 0)) {
@@ -67,17 +83,6 @@ class BoardManager {
     this.currentMinoX += dx;
   }
 
-  void tick() {
-    if (this.isGameOver) return;
-
-    autoDropTickCounter++;
-
-    if (autoDropTickCounter % autoDropTimingTick == 0) {
-      this.autoDropTickCounter = 0;
-      this.autoDropCurrentMino();
-    }
-  }
-
   // event handlers
   private void autoDropCurrentMino() {
     // drop current mino
@@ -93,82 +98,6 @@ class BoardManager {
   private void onBoardFull() {
     // game over
     this.isGameOver = true;
-  }
-
-  // draw state
-  void draw(int x, int y, color backgroundColor) {
-    // TODO: split pane view to another file
-    int currentX = x;
-    int currentY = y;
-    int paneWidth = BLOCK_SIZE * 4 + PADDING * 2;
-    textAlign(LEFT, TOP);
-
-    /* Left pain (100px) */
-    // HOLD
-    fill(0);
-    text("HOLD", currentX, currentY);
-    currentY += this.fontSize + PADDING;
-    fill(backgroundColor);
-    rect(currentX, currentY, paneWidth, paneWidth);
-    if (this.holdMino != null) drawTetrimino(this.holdMino, currentX + PADDING, currentY + PADDING);
-    currentY += paneWidth;
-
-    currentY += PADDING * 2;
-
-    // score
-    fill(0);
-    text("SCORE", currentX, currentY);
-    currentY += this.fontSize + PADDING;
-    fill(backgroundColor);
-    rect(currentX, currentY, paneWidth, this.fontSize + PADDING*2);
-    fill(0);
-    text("" + this.score, currentX + PADDING, currentY + PADDING);
-    currentY += this.fontSize + PADDING*2;
-
-    /* Right pain */
-    textAlign(LEFT, TOP);
-    currentX += paneWidth + PADDING*2 + this.board.width + PADDING*2;
-    currentY = y;
-
-    // next
-    fill(0);
-    Tetrimino[] nextList = this.nextManager.getNextList();
-    text("NEXT", currentX, currentY);
-    currentY += this.fontSize + PADDING;
-    fill(backgroundColor);
-    rect(currentX, currentY, paneWidth, paneWidth);
-    drawTetrimino(nextList[0], currentX + PADDING, currentY + PADDING);
-    currentY += paneWidth;
-    // next 1 (x0.7)
-    currentY += PADDING;
-    fill(backgroundColor);
-    rect(currentX, currentY, BLOCK_SIZE*4*0.7 + PADDING*2, BLOCK_SIZE*4*0.7 + PADDING*2);
-    drawTetrimino(nextList[1], currentX + PADDING, currentY + PADDING, int(BLOCK_SIZE * 0.7));
-    currentY += BLOCK_SIZE*4*0.7 + PADDING*2;
-    // next 2 (x0.6)
-    currentY += PADDING;
-    fill(backgroundColor);
-    rect(currentX, currentY, BLOCK_SIZE*4*0.6 + PADDING*2, BLOCK_SIZE*4*0.6 + PADDING*2);
-    drawTetrimino(nextList[2], currentX + PADDING, currentY + PADDING, int(BLOCK_SIZE * 0.6));
-    currentY += BLOCK_SIZE*4*0.6;
-
-    // hold
-    if (this.holdMino == null) return;
-  }
-  // render mino on 4x4 block
-  private void drawTetrimino(Tetrimino mino, int x, int y) {
-    drawTetrimino(mino, x, y, BLOCK_SIZE);
-  }
-  private void drawTetrimino(Tetrimino mino, int x, int y, int blockSize) {
-    float centeredY = y + (4 - mino.form.length) * blockSize / 2;
-    float centeredX = x + (4 - mino.form[0].length) * blockSize / 2;
-    fill(mino.blockColor);
-    for (int i = 0; i < mino.form.length; i++) {
-      for (int j = 0; j < mino.form[0].length; j++) {
-        if (!mino.form[i][j]) continue;
-        rect(centeredX + blockSize*j, centeredY + blockSize*i, blockSize, blockSize);
-      }
-    }
   }
 
   // controls
