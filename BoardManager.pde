@@ -13,6 +13,8 @@ class BoardManager {
   private int currentMinoX;
   private int currentMinoY;
 
+  private int score;
+
   private boolean isGameOver;
   BoardManager(int autoDropTimingTick, Board board) {
     this.autoDropTickCounter = 0;
@@ -35,9 +37,11 @@ class BoardManager {
   }
   private void confirmCurrentMino() {
     this.board.add(this.currentMino, this.currentMinoX, this.currentMinoY);
-    this.board.removeCompletedLines();
+    int lines_count = this.board.removeCompletedLines();
+    score += SCORE_PER_TOTAL_OF_DISAPPEARED_LINE[lines_count];
+    println("[confirmCurrentMino] score = " + score);
     this.popNextMino();
-    autoDropTickCounter = 0;
+    this.autoDropTickCounter = 0;
   }
   private void restoreCurrent() {
     this.board.changeCurrent(this.currentMino, this.currentMinoY, this.currentMinoX);

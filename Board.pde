@@ -61,7 +61,6 @@ class Board {
     int cnt = 0;
     int[] yMove = new int[this.board.length];
     outside: for (int i = this.board.length-1; i >= 0; i--) {
-      println("[removeConpletedLine] Check y=" + i);
       for (int j = 0; j < this.board[0].length; j++) {
         if (board[i][j] == null) continue outside;
       }
