@@ -13,7 +13,6 @@ void setup() {
   // (leftPain 120 + left-right PADDING * 2) + PADDING*2 + (board 300) + PADDING*2 + (rightPain 120 + left-right PADDING) + (left-right margin 50) * 2 = 704
   size(704, 700);
   PFont font = loadFont("NotoSans-Medium-24.vlw");
-  int fontSize = 24;
   textFont(font, FONT_SIZE);
 
   board = new Board();
