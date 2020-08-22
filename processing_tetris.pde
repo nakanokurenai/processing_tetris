@@ -32,4 +32,14 @@ void draw() {
   leftPane.draw(50, 50, BACKGROUND_COLOR);
   board.draw(50+leftPane.width+PADDING*2,50,BACKGROUND_COLOR);
   rightPane.draw(50+leftPane.width+PADDING*2+board.width+PADDING*2, 50, BACKGROUND_COLOR);
+  if (boardManager.isGameOver()) {
+    // overlay "GAME OVER" text on the board
+    fill(0x66000000);
+    rect(50+leftPane.width+PADDING*2,50,board.width,board.height);
+    fill(0xffffffff);
+    textAlign(CENTER, CENTER);
+    text("GAME OVER",
+      (50+leftPane.width+PADDING*2) + board.width/2,
+      50 + board.height/2);
+  }
 }
