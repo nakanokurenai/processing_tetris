@@ -69,7 +69,7 @@ class Board {
     }
 
     // apply
-    for (int i = this.board.length-1; i >= cnt; i--) {
+    for (int i = this.board.length-1; i >= 0; i--) {
       if (yMove[i] == 0) continue;
       println("[removeCompletedLines] Move y=" + i + " to y=" + (i + yMove[i]));
       for (int j = 0; j < this.board[0].length; j++) {
