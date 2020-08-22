@@ -91,6 +91,19 @@ class BoardManager {
     this.isGameOver = true;
   }
 
+  // draw state
+  void draw(int x, int y, color stateColor) {
+    fill(stateColor);
+    rect(x, y, 200, 200);
+    fill(0);
+    textAlign(LEFT, TOP);
+    text(
+      "SCORE: " + this.score + "\n\n" +
+      "HOLD\n" + (holdMino == null ? "Nothing" : holdMino.name) + "\n\n" +
+      "NEXT\n" + nextManager.getNextList()[0].name + "\n\n" +
+      (this.isGameOver ? "GAME OVER" : ""), x + 8, y + 8);
+  }
+
   // controls
   void hardDrop() {
     this.board.flushCurrent();

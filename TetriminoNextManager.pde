@@ -15,19 +15,19 @@ class TetriminoNextManager {
     return MINO_LIST[this.nextList.remove(0)].clone();
   }
   Tetrimino[] getNextList() {
-    Tetrimino[] nextList = {};
+    Tetrimino[] nextList = new Tetrimino[this.nextList.size()];
     for (int i = 0; i < this.nextList.size(); i++) {
-      append(nextList, MINO_LIST[this.nextList.get(i)].clone());
+      nextList[i] = MINO_LIST[this.nextList.get(i)].clone();
     }
     return nextList;
   }
-  void select() {
+  private void select() {
     if (choices.size() == 0) this.resetChoices();
 
     int chooseIndex = choices.remove(int(random(0, choices.size())));
     nextList.append(chooseIndex);
   }
-  void resetChoices() {
+  private void resetChoices() {
     choices = new IntList();
     for (int i = 0; i < MINO_LIST.length; i++) {
       choices.append(i);

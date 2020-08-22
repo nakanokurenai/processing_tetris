@@ -6,22 +6,19 @@ class Board {
   private Tetrimino[][] board;
   private Tetrimino current;
   private Tetrimino currentGhost;
-  private int x;
-  private int y;
   private int width;
   private int height;
   private int blockSize;
   private boolean locked;
-  Board(int x, int y, int maxWidth, int maxHeight) {
+  Board(int maxWidth, int maxHeight) {
     // generally tetris implemented as visible 20x10 board,
     // but there are also invisibly +2 line.
     board = new Tetrimino[22][10];
 
-    this.x = x;
-    this.y = y;
-    this.blockSize = min(maxHeight / this.board.length, maxWidth / this.board[0].length);
+    this.blockSize = min(maxHeight / (this.board.length-2), maxWidth / this.board[0].length);
     this.height = this.blockSize * (this.board.length - BOARD_HIDDEN_ROWS);
     this.width = this.blockSize * this.board[0].length;
+    println("[Board] Initialized with blockSize=" + blockSize + ", height=" + height + ", width=" + width);
   }
 
   // callee should re-assign old-ghost if needed / failed
@@ -147,14 +144,14 @@ class Board {
   }
 
   // must clear canvas before call
-  void draw(color boardColor) {
+  void draw(int x, int y, color boardColor) {
     fill(boardColor);
-    rect(this.x, this.y, this.width, this.height);
+    rect(x, y, this.width, this.height);
     for (int boardY = BOARD_HIDDEN_ROWS; boardY < this.board.length; boardY++) {
       for (int boardX = 0; boardX < this.board[0].length; boardX++) {
         if (this.board[boardY][boardX] == null) continue;
         fill(this.board[boardY][boardX].blockColor);
-        rect(this.x + this.blockSize * boardX, this.y + this.blockSize * (boardY - BOARD_HIDDEN_ROWS), this.blockSize, this.blockSize);
+        rect(x + this.blockSize * boardX, y + this.blockSize * (boardY - BOARD_HIDDEN_ROWS), this.blockSize, this.blockSize);
       }
     }
   }
