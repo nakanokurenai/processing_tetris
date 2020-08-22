@@ -6,18 +6,16 @@ class Board {
   private Tetrimino[][] board;
   private Tetrimino current;
   private Tetrimino currentGhost;
-  private int width;
-  private int height;
-  private int blockSize;
+  final int width;
+  final int height;
   private boolean locked;
-  Board(int maxWidth, int maxHeight) {
+  Board() {
     // generally tetris implemented as visible 20x10 board,
     // but there are also invisibly +2 line.
     board = new Tetrimino[22][10];
 
-    this.blockSize = min(maxHeight / (this.board.length-2), maxWidth / this.board[0].length);
-    this.height = this.blockSize * (this.board.length - BOARD_HIDDEN_ROWS);
-    this.width = this.blockSize * this.board[0].length;
+    this.height = blockSize * (this.board.length - BOARD_HIDDEN_ROWS);
+    this.width = blockSize * this.board[0].length;
     println("[Board] Initialized with blockSize=" + blockSize + ", height=" + height + ", width=" + width);
   }
 
@@ -151,7 +149,7 @@ class Board {
       for (int boardX = 0; boardX < this.board[0].length; boardX++) {
         if (this.board[boardY][boardX] == null) continue;
         fill(this.board[boardY][boardX].blockColor);
-        rect(x + this.blockSize * boardX, y + this.blockSize * (boardY - BOARD_HIDDEN_ROWS), this.blockSize, this.blockSize);
+        rect(x + BLOCK_SIZE * boardX, y + BLOCK_SIZE * (boardY - BOARD_HIDDEN_ROWS), BLOCK_SIZE, BLOCK_SIZE);
       }
     }
   }

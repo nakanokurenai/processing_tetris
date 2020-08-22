@@ -8,6 +8,7 @@ class TetriminoNextManager {
     // look ahead
     this.select();
     this.select();
+    this.select();
   }
 
   Tetrimino pop() {
