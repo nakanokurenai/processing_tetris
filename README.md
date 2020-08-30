@@ -5,7 +5,6 @@
 LICENSE
 ---
 - This project licensed under [CC0](./docs/CC0-1.0.txt) unless otherwise specified.
-- [NotoSans Medium](./data/NotoSans-Medium-24.vlw) licensed under [SIL OFL](./docs/OFL-1.1.txt).
 
 参考文献
 ---
