@@ -77,7 +77,7 @@ class Board {
   }
   boolean add(Tetrimino mino, int boardX, int minBoardY) {
     println("[add] mino=" + mino.name + ", x=" + boardX + ", minY=" + minBoardY);
-    if (0 > boardX || boardX + (mino.form[0].length-1) >= this.board[0].length) {
+    if (0 > boardX || boardX + (mino.getWidth()-1) > (this.board[0].length-1)) {
       println("[add] x outside from board");
       return false;
     }
@@ -104,8 +104,8 @@ class Board {
   }
   // boardY: top, boardX: left
   private boolean minoColide(Tetrimino mino, int boardY, int boardX) {
-    int minoYMax = mino.form.length;
-    int minoXMax = mino.form[0].length;
+    int minoYMax = mino.getHeight();
+    int minoXMax = mino.getWidth();
     for (int minoY = 0; minoY < minoYMax; minoY++) {
       for (int minoX = 0; minoX < minoXMax; minoX++) {
         if (!mino.form[minoY][minoX]) continue;

@@ -87,7 +87,7 @@ class BoardManager {
   private void autoDropCurrentMino() {
     // drop current mino
     if (!this.board.changeCurrent(this.currentMino, this.currentMinoY+1, this.currentMinoX)) {
-      // FIXME: this block expects that board flushed currentMino already
+      // FIXME: this block expects that board flushed currentMino already. it's implementation detail in Board which should be hidden.
       // if can't drop, confirm it
       this.confirmCurrentMino();
     };

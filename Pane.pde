@@ -5,11 +5,11 @@ class Pane {
   }
   private void drawTetrimino(Tetrimino mino, int x, int y, int blockSize) {
     if (mino == null) return;
-    float centeredY = y + (4 - mino.form.length) * blockSize / 2;
-    float centeredX = x + (4 - mino.form[0].length) * blockSize / 2;
+    float centeredY = y + (4 - mino.getHeight()) * blockSize / 2;
+    float centeredX = x + (4 - mino.getWidth()) * blockSize / 2;
     fill(mino.blockColor);
-    for (int i = 0; i < mino.form.length; i++) {
-      for (int j = 0; j < mino.form[0].length; j++) {
+    for (int i = 0; i < mino.getHeight(); i++) {
+      for (int j = 0; j < mino.getWidth(); j++) {
         if (!mino.form[i][j]) continue;
         rect(centeredX + blockSize*j, centeredY + blockSize*i, blockSize, blockSize);
       }
