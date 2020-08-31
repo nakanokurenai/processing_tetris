@@ -24,10 +24,6 @@ class InputManager {
   void touch() {
     if (keyPressed == true && key == CODED) {
       switch (keyCode) {
-        case UP: {
-          hardDropThrottler.touch();
-          break;
-        }
         case DOWN: {
           moveDownThrottler.touch();
           break;
@@ -55,6 +51,11 @@ class InputManager {
         case 'X':
         case 'x': {
           rotateRightThrottler.touch();
+          break;
+        }
+        // space-key
+        case ' ': {
+          hardDropThrottler.touch();
           break;
         }
       }
