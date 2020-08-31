@@ -36,10 +36,6 @@ class InputManager {
           moveRightThrottler.touch();
           break;
         }
-        case SHIFT: {
-          swapHoldThrottler.touch();
-          break;
-        }
       }
     } else if (keyPressed == true) {
       switch (key) {
@@ -56,6 +52,10 @@ class InputManager {
         // space-key
         case ' ': {
           hardDropThrottler.touch();
+          break;
+        }
+        case 'c': {
+          swapHoldThrottler.touch();
           break;
         }
       }
