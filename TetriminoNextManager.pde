@@ -15,6 +15,10 @@ class TetriminoNextManager {
     this.select();
     return MINO_LIST[this.nextList.remove(0)].clone();
   }
+
+  Tetrimino getNext() {
+    return MINO_LIST[this.nextList.get(0)].clone();
+  }
   Tetrimino[] getNextList() {
     Tetrimino[] nextList = new Tetrimino[this.nextList.size()];
     for (int i = 0; i < this.nextList.size(); i++) {

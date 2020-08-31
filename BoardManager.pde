@@ -75,12 +75,13 @@ class BoardManager {
       this.restoreCurrent();
       return false;
     }
+    this.currentMino = nextMino;
+    this.currentMinoX = boardX;
+    this.currentMinoY = boardY;
     return true;
   }
   private void tryMove(int dy, int dx) {
-    if (!tryChangeCurrent(this.currentMino, this.currentMinoY + dy, this.currentMinoX + dx)) return;
-    this.currentMinoY += dy;
-    this.currentMinoX += dx;
+    tryChangeCurrent(this.currentMino, this.currentMinoY + dy, this.currentMinoX + dx);
   }
 
   // event handlers
@@ -122,14 +123,12 @@ class BoardManager {
   void rotateLeft() {
     if (this.isGameOver) return;
     Tetrimino nextMino = this.currentMino.clone().rotateLeft();
-    if (!tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX)) return;
-    this.currentMino = nextMino;
+    tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX);
   }
   void rotateRight() {
     if (this.isGameOver) return;
     Tetrimino nextMino = this.currentMino.clone().rotateRight();
-    if (!tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX)) return;
-    this.currentMino = nextMino;
+    tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX);
   }
   boolean swapHoldMino() {
     if (this.isGameOver) return false;
@@ -138,15 +137,21 @@ class BoardManager {
       println("[swapHoldMino] already swapped...");
       return false;
     }
-    if (holdMino == null) {
-      println("[swapHoldMino] pop next mino");
-      holdMino = this.nextManager.pop();
+
+    Tetrimino fromMino = this.currentMino;
+    Tetrimino toMino = this.holdMino != null ? this.holdMino : this.nextManager.getNext();
+    boolean isNextMinoUsed = this.holdMino == null;
+
+    if (!tryChangeCurrent(toMino, this.currentMinoY, this.currentMinoX)) {
+      // holded mino is maybe wider than current mino
+      int sizeBigger = max(0, toMino.getWidth() - fromMino.getWidth());
+      if (!tryChangeCurrent(toMino, this.currentMinoY, this.currentMinoX - sizeBigger)) {
+        return false;
+      }
     }
-    Tetrimino nextMino = holdMino;
     this.holdUsed = true;
-    tryChangeCurrent(nextMino, this.currentMinoY, this.currentMinoX);
-    this.holdMino = this.currentMino;
-    this.currentMino = nextMino;
+    if (isNextMinoUsed) this.nextManager.pop();
+    this.holdMino = fromMino;
     return true;
   }
 }
